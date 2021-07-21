@@ -25,13 +25,17 @@ def export_battles():
     )
     battlelist = []
     for battle in battles:
-        if sp := battle.raw_data.get('starPlayer'):
-            if sp['tag'] in searchtags:
-                battle.raw_data['result'] = 'victory'
-            else:
-                battle.raw_data['result'] = 'defeat'
-        else:
-            battle.raw_data['result'] = None
+        try: 
+            if battle.raw_data['result'] == None:
+                if sp := battle.raw_data.get('starPlayer'):
+                    if sp['tag'].lstrip('#') in searchtags:
+                        battle.raw_data['result'] = 'victory'
+                    else:
+                        battle.raw_data['result'] = 'defeat'
+                else:
+                    battle.raw_data['result'] = None
+        except KeyError:
+            pass
 
         battlelist.append({
         'battleTime': battle.battle_time.strftime('%Y%m%dT%H%M%S') + '.000Z',
