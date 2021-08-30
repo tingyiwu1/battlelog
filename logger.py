@@ -2,6 +2,7 @@ import brawlstats
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Boolean, DateTime, func
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+from sqlalchemy.orm.session import Session
 from declaritive import Base, battle_comp, Battle, Map, Comp, Brawler, Player
 from client import client
 from data import *
@@ -14,14 +15,16 @@ engine = create_engine('sqlite:///battlelog.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-session = DBSession()
+session: Session = DBSession()
 
 if __name__ == '__main__':
     battles = []
     for tag in searchtags:
         try:
             battles += client.get_battle_logs(tag).raw_data
-        except brawlstats.errors.UnexpectedError:
+        except (brawlstats.errors.UnexpectedError, brawlstats.errors.NotFoundError) as e:
+            print('Error on ' + tag)
+            print(e)
             continue
     # with open('battlelog2.json', 'r') as f:
     #     battles = json.load(f)
@@ -38,7 +41,7 @@ if __name__ == '__main__':
     
     # player = (
     #     session.query(Player)
-    #     .filter(Player.player_tag == 'QUYCVC2')
+    #     .filter(Player.player_tag == 'P29RYYQCP')
     #     .one_or_none()
     # )
     # player.analyze()

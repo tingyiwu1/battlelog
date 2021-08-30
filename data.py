@@ -168,7 +168,7 @@ def add_battle(time, map_name, mode, map_api_id, battle_json):
 def add_battles(battles_json):
     battles_json = sorted(battles_json, key=lambda b: Battle.timestamp_as_datetime(b['battleTime']))
 
-    epoch = Battle.timestamp_as_datetime(battles_json[0]['battleTime'])
+    # epoch = Battle.timestamp_as_datetime(battles_json[0]['battleTime'])
 
     recent = (
         session.query(Battle.battle_time, Map.api_id, Battle.raw_data)
